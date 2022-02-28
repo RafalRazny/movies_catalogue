@@ -1,7 +1,8 @@
 import tmdb_client
-import json
-import pytest
 from unittest.mock import Mock
+import requests
+
+API_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzNzE0YzIxMGFmNGJmYzZlYjBjZjI3YjhiZjgyN2M3OSIsInN1YiI6IjYxZmMwMjBkN2E5N2FiMDBlNDY2MjFmNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.77qRfdx5C9SnDqNKDE7JrPcIv8Gp9gw5LeMgN0xKq5I"
 
 def test_get_poster_url_uses_default_size():
     poster_api_path = "some-poster-path"
@@ -32,4 +33,24 @@ def test_get_sinlgle_movie(monkeypatch):
     monkeypatch.setattr("tmdb_client.request.get", request_mock)
     single_movie = tmdb_client.get_single_movie(movie_id='47669')
     assert mock_movie == single_movie
+
+def test_get_sinlgle_movie(monkeypatch):
+    mock_movie = ['Movie 1']
+    request_mock = Mock()
+    response = request_mock.return_value
+    response.json.return_value = mock_movie
+    monkeypatch.setattr("tmdb_client.request.get", request_mock)
+    single_movie = tmdb_client.get_single_movie(movie_id='47669')
+    assert mock_movie == single_movie
+
+def call_tmdb_api_for_credits(endpoint):
+    full_url = f"https://api.themovie.org/3/{endpoint}/credits"
+    headers =  {"Authorization": f"Bearer {API_TOKEN}"
+    }
+    response = requests.get(full_url, headers=headers)
+    response.raise_for_status()
+    return response.json()
+
+def test_get_single_movie_cast(movie_id):
+    return call_tmdb_api_for_credits(f'{movie_id}/credits')
 
