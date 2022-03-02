@@ -1,6 +1,8 @@
 import tmdb_client
 from unittest.mock import Mock
 import requests
+from main import app
+import pytest
 
 API_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzNzE0YzIxMGFmNGJmYzZlYjBjZjI3YjhiZjgyN2M3OSIsInN1YiI6IjYxZmMwMjBkN2E5N2FiMDBlNDY2MjFmNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.77qRfdx5C9SnDqNKDE7JrPcIv8Gp9gw5LeMgN0xKq5I"
 
@@ -9,7 +11,7 @@ def test_get_poster_url_uses_default_size():
     excpected_default_size = 'w342'
     poster_url = tmdb_client.get_poster_url(poster_api_path=poster_api_path)
     assert excpected_default_size in poster_url
-    #assert poster_url == "https://image.tmdb.org/t/p/w342/some-poster-path"
+    assert poster_url == "https://image.tmdb.org/t/p/w342/some-poster-path"
 
 def test_get_movies_list_type_popular():
     movies_list = tmdb_client.get_movies_list(list_type="popular")
@@ -45,3 +47,33 @@ def call_tmdb_api_for_credits(endpoint):
 def get_single_movie_cast(movie_id):
     return call_tmdb_api_for_credits(f'{movie_id}/credits')
 
+def call_tmdb_api(endpoint):
+   full_url = f"https://api.themoviedb.org/3/{endpoint}"
+   headers = {
+       "Authorization": f"Bearer {API_TOKEN}"
+   }
+   response = requests.get(full_url, headers=headers)
+   response.raise_for_status()
+   return response.json()
+
+def test_homepage(monkeypatch):
+   api_mock = Mock(return_value={'results': []})
+   monkeypatch.setattr("tmdb_client.call_tmdb_api", api_mock)
+
+   with app.test_client() as client:
+       response = client.get('/')
+       assert response.status_code == 200
+       api_mock.assert_called_once_with('movie/popular')
+
+@pytest.mark.parametrize('how_many, list_type',(
+  ('8', '4'), ('popular', 'top_rated')))
+
+def test_get_movies(monkeypatch, list_type, how_many):
+    api_mock = Mock(return_value={'results': []})
+    monkeypatch.setattr("tmdb_client.call_tmdb_api", api_mock)
+
+    with app.test_client(list_type, how_many) as client:
+       response = client.get(f'/movies/{list_type}{how_many}')
+       single_movie = tmdb_client.get_movies(list_type=list_type, how_many=how_many)
+       assert response.get_movies == single_movie
+       api_mock.assert_called_once_with('movie/popular[:4]')
