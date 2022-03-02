@@ -20,27 +20,18 @@ def test_get_movies_list(monkeypatch):
    requests_mock = Mock()
    response = requests_mock.return_value
    response.json.return_value = mock_movies_list
-   monkeypatch.setattr("tmdb_client.request.get", requests_mock)
+   monkeypatch.setattr("tmdb_client.requests.get", requests_mock)
 
    movies_list = tmdb_client.get_movies_list(list_type='popular')
    assert movies_list == mock_movies_list
 
 def test_get_sinlgle_movie(monkeypatch):
-    mock_movie = ['Movie 1']
+    mock_movie = ['568124']
     request_mock = Mock()
     response = request_mock.return_value
     response.json.return_value = mock_movie
-    monkeypatch.setattr("tmdb_client.request.get", request_mock)
-    single_movie = tmdb_client.get_single_movie(movie_id='47669')
-    assert mock_movie == single_movie
-
-def test_get_sinlgle_movie(monkeypatch):
-    mock_movie = ['Movie 1']
-    request_mock = Mock()
-    response = request_mock.return_value
-    response.json.return_value = mock_movie
-    monkeypatch.setattr("tmdb_client.request.get", request_mock)
-    single_movie = tmdb_client.get_single_movie(movie_id='47669')
+    monkeypatch.setattr("tmdb_client.requests.get", request_mock)
+    single_movie = tmdb_client.get_single_movie(movie_id='568124')
     assert mock_movie == single_movie
 
 def call_tmdb_api_for_credits(endpoint):
@@ -51,6 +42,6 @@ def call_tmdb_api_for_credits(endpoint):
     response.raise_for_status()
     return response.json()
 
-def test_get_single_movie_cast(movie_id):
+def get_single_movie_cast(movie_id):
     return call_tmdb_api_for_credits(f'{movie_id}/credits')
 
