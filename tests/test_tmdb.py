@@ -1,15 +1,17 @@
 import tmdb_client
+import main
 from unittest.mock import Mock
 import requests
 from main import app
 import pytest
 
 API_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzNzE0YzIxMGFmNGJmYzZlYjBjZjI3YjhiZjgyN2M3OSIsInN1YiI6IjYxZmMwMjBkN2E5N2FiMDBlNDY2MjFmNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.77qRfdx5C9SnDqNKDE7JrPcIv8Gp9gw5LeMgN0xKq5I"
-
+headers =  {"Authorization": f"Bearer {API_TOKEN}"
+    }
 def test_get_poster_url_uses_default_size():
     poster_api_path = "some-poster-path"
     excpected_default_size = 'w342'
-    poster_url = tmdb_client.get_poster_url(poster_api_path=poster_api_path)
+    poster_url = main.tmdb_client.get_poster_url(poster_api_path=poster_api_path)
     assert excpected_default_size in poster_url
     assert poster_url == "https://image.tmdb.org/t/p/w342/some-poster-path"
 
@@ -38,8 +40,6 @@ def test_get_sinlgle_movie(monkeypatch):
 
 def call_tmdb_api_for_credits(endpoint):
     full_url = f"https://api.themovie.org/3/{endpoint}/credits"
-    headers =  {"Authorization": f"Bearer {API_TOKEN}"
-    }
     response = requests.get(full_url, headers=headers)
     response.raise_for_status()
     return response.json()
@@ -49,16 +49,13 @@ def get_single_movie_cast(movie_id):
 
 def call_tmdb_api(endpoint):
    full_url = f"https://api.themoviedb.org/3/{endpoint}"
-   headers = {
-       "Authorization": f"Bearer {API_TOKEN}"
-   }
    response = requests.get(full_url, headers=headers)
    response.raise_for_status()
    return response.json()
 
 def test_homepage(monkeypatch):
    api_mock = Mock(return_value={'results': []})
-   monkeypatch.setattr("tmdb_client.call_tmdb_api", api_mock)
+   monkeypatch.setattr("main.tmdb_client.call_tmdb_api", api_mock)
 
    with app.test_client() as client:
        response = client.get('/')
@@ -70,7 +67,7 @@ def test_homepage(monkeypatch):
 
 def test_get_movies(monkeypatch, list_type, how_many):
     api_mock = Mock(return_value={'results': []})
-    monkeypatch.setattr("tmdb_client.call_tmdb_api", api_mock)
+    monkeypatch.setattr("main.tmdb_client.call_tmdb_api", api_mock)
 
     with app.test_client(list_type, how_many) as client:
        response = client.get(f'/movies/{list_type}{how_many}')
