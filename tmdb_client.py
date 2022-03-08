@@ -15,7 +15,7 @@ def get_movies_list(list_type):
     response.raise_for_status()
     return response.json()
 
-def get_movies(how_many, list_type):
+def get_movies(list_type, how_many):
     data = get_movies_list(list_type)
     return data["results"][:how_many]
 
