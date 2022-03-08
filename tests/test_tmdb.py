@@ -11,7 +11,7 @@ headers =  {"Authorization": f"Bearer {API_TOKEN}"
 def test_get_poster_url_uses_default_size():
     poster_api_path = "some-poster-path"
     excpected_default_size = 'w342'
-    poster_url = main.tmdb_client.get_poster_url(poster_api_path=poster_api_path)
+    poster_url = tmdb_client.get_poster_url(poster_api_path=poster_api_path)
     assert excpected_default_size in poster_url
     assert poster_url == "https://image.tmdb.org/t/p/w342/some-poster-path"
 
@@ -55,19 +55,19 @@ def call_tmdb_api(endpoint):
 
 def test_homepage(monkeypatch):
    api_mock = Mock(return_value={'results': []})
-   monkeypatch.setattr("main.tmdb_client.call_tmdb_api", api_mock)
+   monkeypatch.setattr("main.homepage", api_mock)
 
    with app.test_client() as client:
        response = client.get('/')
        assert response.status_code == 200
        api_mock.assert_called_once_with('movie/popular')
 
-@pytest.mark.parametrize('how_many, list_type',(
-  ('8', '4'), ('popular', 'top_rated')))
+@pytest.mark.parametrize('list_type, how_many',(
+  ('popular', '4'), ('top_rated', '8')))
 
 def test_get_movies(monkeypatch, list_type, how_many):
     api_mock = Mock(return_value={'results': []})
-    monkeypatch.setattr("main.tmdb_client.call_tmdb_api", api_mock)
+    monkeypatch.setattr("tmdb_client.get_movies", api_mock)
 
     with app.test_client(list_type, how_many) as client:
        response = client.get(f'/movies/{list_type}{how_many}')
