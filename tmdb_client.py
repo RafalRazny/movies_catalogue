@@ -1,8 +1,8 @@
 import requests
 from flask import Flask
-import os
+import random
 
-API_TOKEN = os.environ.get("TMDB_API_TOKEN", "")
+API_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzNzE0YzIxMGFmNGJmYzZlYjBjZjI3YjhiZjgyN2M3OSIsInN1YiI6IjYxZmMwMjBkN2E5N2FiMDBlNDY2MjFmNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.77qRfdx5C9SnDqNKDE7JrPcIv8Gp9gw5LeMgN0xKq5I"
 
 app = Flask(__name__)
 
