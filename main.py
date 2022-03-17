@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import tmdb_client
+import random
 
 app = Flask(__name__)
 
@@ -7,7 +8,8 @@ app = Flask(__name__)
 def homepage():
     selected_list = request.args.get("list_type", "popular")
     movies = tmdb_client.get_movies(how_many=8, list_type=selected_list)
-    return render_template("homepage.html", movies=movies, current_list=selected_list)
+    list_types = ("popular", "top_rated", "upcoming", "now_playing", "latest")
+    return render_template("homepage.html", movies=movies, current_list=selected_list, list_types=list_types)
 
 def get_movie_info():
     movies_2 = tmdb_client.get_popular_movies()["results"][:8]
