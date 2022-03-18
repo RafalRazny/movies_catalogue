@@ -9,7 +9,11 @@
    </div>
      <div class="col-lg-12 mb-4">
        {% for list in list_types %}
-        <a href="{{ url_for('homepage', list_type=list) }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="false"> {{ list|replace("_", " ")|capitalize }}</a>
+            {% if list in url_for('homepage', list_type=list) %}
+                <a href="{{ url_for('homepage', list_type=list) }}" class="btn btn-outline-primary active" role="button"> {{ list|replace("_", " ")|capitalize }}</a>
+            {% else %}
+                <a href="{{ url_for('homepage', list_type=list) }}" class="btn btn-outline-primary" role="button"> {{ list|replace("_", " ")|capitalize }}</a>
+            {% endif %}
         {% endfor %}
      </div>
    {% for movie in movies %}
