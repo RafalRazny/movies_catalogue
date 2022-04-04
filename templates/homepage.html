@@ -8,11 +8,11 @@
        <p class="lead">Znajdziesz tutaj tylko najlepsze tytuły!</p>
    </div>
      <div class="col-lg-12 mb-4">
-       {% for list in list_types %}
-            {% if list in url_for('homepage', list_type=list) %}
-                <a href="{{ url_for('homepage', list_type=list) }}" class="btn btn-outline-primary active" role="button"> {{ list|replace("_", " ")|capitalize }}</a>
+        {% for list in list_types %}
+            {% if list == selected_list %}
+                <a href="{{ url_for('homepage') }}?list_type={{list}}" class="btn btn-outline-primary active" role="button"> {{ list|replace("_", " ")|capitalize }}</a>
             {% else %}
-                <a href="{{ url_for('homepage', list_type=list) }}" class="btn btn-outline-primary" role="button"> {{ list|replace("_", " ")|capitalize }}</a>
+                <a href="{{ url_for('homepage') }}?list_type={{list}}" class="btn btn-outline-primary" role="button"> {{ list|replace("_", " ")|capitalize }}</a>
             {% endif %}
         {% endfor %}
      </div>

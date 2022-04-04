@@ -9,7 +9,7 @@ def homepage():
     selected_list = request.args.get("list_type", "popular")
     movies = tmdb_client.get_movies(how_many=8, list_type=selected_list)
     list_types = ("popular", "top_rated", "upcoming", "now_playing")
-    return render_template("homepage.html", movies=movies, list_types=list_types)
+    return render_template("homepage.html", movies=movies, list_types=list_types, selected_list=selected_list)
 
 #def get_movie_info():
     movies_2 = tmdb_client.get_popular_movies()["results"][:8]
