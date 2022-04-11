@@ -51,5 +51,14 @@ def get_random_picture(movie_id):
     response = requests.get(endpoint, headers=headers)
     return response.json()
 
+def call_tmdb_api(endpoint):
+   full_url = f"https://api.themoviedb.org/3/{endpoint}"
+   headers ={
+       "Authorization": f"Bearer {API_TOKEN}"
+   }
+   response = requests.get(full_url, headers=headers)
+   response.raise_for_status()
+   return response.json()
+
 if __name__ == '__main__':
     app.run(debug=True)
